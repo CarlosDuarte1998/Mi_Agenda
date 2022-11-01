@@ -11,7 +11,8 @@ public class ConexionSQLite extends SQLiteOpenHelper {
     final String TABLA_CONTACTOS= "CREATE TABLE contactos(" +
             "id_contacto INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
             "nombre TEXT," +
-            "telefono TEXT)";
+            "telefono TEXT," +
+            "correo TEXT)";
     public ConexionSQLite(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
 

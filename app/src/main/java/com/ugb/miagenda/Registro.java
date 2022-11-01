@@ -15,7 +15,7 @@ import com.ugb.miagenda.clases.ConexionSQLite;
 public class Registro extends AppCompatActivity {
     ConexionSQLite objConexion;
     final String NOMBRE_BASE_DATOS = "miagenda";
-    EditText nombre, telefono;
+    EditText nombre, telefono, edCorreo;
     Button botonAgregar, botonRegresar;
 
 
@@ -27,6 +27,7 @@ public class Registro extends AppCompatActivity {
         objConexion = new ConexionSQLite(Registro.this,NOMBRE_BASE_DATOS,null,1);
         nombre = findViewById(R.id.edNombre);
         telefono = findViewById(R.id.edNumero);
+        edCorreo=findViewById(R.id.edCorreos);
         botonAgregar = findViewById(R.id.agregar);
         botonRegresar = findViewById(R.id.RegresarHome);
 
@@ -38,9 +39,9 @@ public class Registro extends AppCompatActivity {
                 //Registrar
                     String Validacion1=nombre.getText().toString();
                     String Validacion2=telefono.getText().toString();
-                if (Validacion1.toString().isEmpty() || Validacion2.toString().isEmpty()) {
+                    String Validacion3=edCorreo.getText().toString();
+                if (Validacion1.toString().isEmpty() || Validacion2.toString().isEmpty() || Validacion3.toString().isEmpty()) {
                     Toast.makeText(Registro.this, "Debes llenar todos los campos", Toast.LENGTH_LONG).show();
-
                 }else {
 
                     registrar();
@@ -75,7 +76,7 @@ public class Registro extends AppCompatActivity {
 
         try{
             SQLiteDatabase miBaseDatos = objConexion.getWritableDatabase();
-            String comando = "INSERT INTO contactos (nombre,telefono) VALUES ('"+ nombre.getText() +"','"+ telefono.getText() +"')";
+            String comando = "INSERT INTO contactos (nombre,telefono,correo) VALUES ('"+ nombre.getText() +"','"+ telefono.getText() +"','"+ edCorreo.getText() +"')";
             miBaseDatos.execSQL(comando);
             miBaseDatos.close();
             Toast.makeText(Registro.this, "Contacto guardado", Toast.LENGTH_LONG).show();

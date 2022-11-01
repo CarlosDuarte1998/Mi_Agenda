@@ -95,6 +95,29 @@
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayouts"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:hint="Correo electronico"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:counterMaxLength="10"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditCorreos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textWebEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <com.google.android.material.button.MaterialButton
 
@@ -129,6 +152,17 @@
                 app:iconGravity="textEnd"
                 app:layout_constraintTop_toBottomOf="@+id/BtnEliminar"
                 tools:ignore="MissingConstraints" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCorreos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@android:drawable/ic_dialog_email"
+                android:text="Enviar correo"
+                app:backgroundTint="#BB86FC"
+                app:iconGravity="textEnd"
+                app:layout_constraintTop_toBottomOf="@+id/BtnLlamar"
+                tools:ignore="MissingConstraints" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/BtnRegresar"
                 android:layout_width="match_parent"
@@ -137,8 +171,10 @@
                 android:text="Regresar"
                 app:backgroundTint="#BB86FC"
                 app:iconGravity="textEnd"
-                app:layout_constraintTop_toBottomOf="@+id/BtnLlamar"
+                app:layout_constraintTop_toBottomOf="@+id/btnCorreo"
                 tools:ignore="MissingConstraints" />
+
+
 
         </LinearLayout>
     </ScrollView>

@@ -103,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> miLista = new ArrayList<>();
         SQLiteDatabase base = objConexion.getReadableDatabase();
         String criterio = txtCriterio.getText().toString();
-        String consulta = "select id_contacto, nombre,telefono from contactos WHERE nombre LIKE '%"+ criterio +"%' order by nombre ASC";
+        String consulta = "select id_contacto, nombre,telefono,correo from contactos WHERE nombre LIKE '%"+ criterio +"%' order by nombre ASC";
         Cursor cadaRegistro = base.rawQuery(consulta,null);
         arregloID.clear();
         if(cadaRegistro.moveToFirst()){
             do{
-                miLista.add(cadaRegistro.getString(1).toString() + " - "+ cadaRegistro.getString(2).toString());
+                miLista.add(cadaRegistro.getString(1).toString() + " - "+ cadaRegistro.getString(2).toString()+" - "+cadaRegistro.getString(3).toString());
                 arregloID.add(cadaRegistro.getInt(0));
             }while(cadaRegistro.moveToNext());
         }
