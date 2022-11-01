@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> miLista = new ArrayList<>();
         SQLiteDatabase base = objConexion.getReadableDatabase();
         String criterio = txtCriterio.getText().toString();
-        String consulta = "select id_contacto, nombre,telefono,correo from contactos WHERE nombre LIKE '%"+ criterio +"%' order by nombre ASC";
+        String consulta = "select id_contacto, nombre,telefono,correo from contactos WHERE nombre like '%"+criterio+"%' or telefono like '%"+criterio+"%' or correo like '%"+criterio+"%' order by nombre ASC";
         Cursor cadaRegistro = base.rawQuery(consulta,null);
         arregloID.clear();
         if(cadaRegistro.moveToFirst()){
