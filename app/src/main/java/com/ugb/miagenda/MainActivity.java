@@ -3,85 +3,77 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Adapter;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ugb.miagenda.clases.ConexionSQLite;
+import com.ugb.miagenda.clases.Configuraciones;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.ErrorManager;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
-    ConexionSQLite objConexion;
-    final String NOMBRE_BASE_DATOS = "miagenda";
+
     Button botonAgregar, botonBuscar;
     ListView listaContactos;
-    ArrayList<String> lista;
-    ArrayAdapter adaptador;
     EditText txtCriterio;
-    List<Integer> arregloID = new ArrayList<Integer>();
-
+    Configuraciones objConfiguracion = new Configuraciones();
+    String URL = objConfiguracion.urlWebServices;
     FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        objConexion = new ConexionSQLite(MainActivity.this,NOMBRE_BASE_DATOS,null,1);
-        floatingActionButton=findViewById(R.id.floatAgregar);
-        //botonAgregar = findViewById(R.id.btnAgregar);
 
+        floatingActionButton = findViewById(R.id.floatAgregar);
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent ventana = new Intent(MainActivity.this, Registro.class);
                 startActivity(ventana);
-                MainActivity.this.finish();
             }
         });
-      /*  botonAgregar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });*/
+
+
+
+
+
 
         txtCriterio = findViewById(R.id.editText3);
-
         listaContactos = findViewById(R.id.lvContactos);
-        lista = llenarLista();
-        adaptador = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1,lista);
-        listaContactos.setAdapter(adaptador);
-
-        listaContactos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                int idSeleccionado = arregloID.get(position);
-                Intent ventanaModificar = new Intent(MainActivity.this, ModificarContacto.class);
-                ventanaModificar.putExtra("id_contacto", idSeleccionado);
-                startActivity(ventanaModificar);
-                MainActivity.this.finish();
-            }
-        });
 
         botonBuscar = findViewById(R.id.btnBuscar);
         botonBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lista = llenarLista();
-                adaptador = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1,lista);
-                listaContactos.setAdapter(adaptador);
+                llenarLista();
             }
         });
     }
@@ -90,29 +82,104 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         try{
-            lista.clear();
-            lista = llenarLista();
-            adaptador = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1,lista);
-            listaContactos.setAdapter(adaptador);
+            llenarLista();
         }catch (Exception error){
             Toast.makeText(MainActivity.this, "Error: "+ error.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    public ArrayList llenarLista(){
-        ArrayList<String> miLista = new ArrayList<>();
-        SQLiteDatabase base = objConexion.getReadableDatabase();
-        String criterio = txtCriterio.getText().toString();
-        String consulta = "select id_contacto, nombre,telefono,correo from contactos WHERE nombre like '%"+criterio+"%' or telefono like '%"+criterio+"%' or correo like '%"+criterio+"%' order by nombre ASC";
-        Cursor cadaRegistro = base.rawQuery(consulta,null);
-        arregloID.clear();
-        if(cadaRegistro.moveToFirst()){
-            do{
-                miLista.add(cadaRegistro.getString(1).toString() + " - "+ cadaRegistro.getString(2).toString()+" - "+cadaRegistro.getString(3).toString());
-                arregloID.add(cadaRegistro.getInt(0));
-            }while(cadaRegistro.moveToNext());
-        }
-        return miLista;
+    public void llenarLista(){
+        final String criterio = txtCriterio.getText().toString();
+        RequestQueue objetoPeticion = Volley.newRequestQueue(MainActivity.this);
+        StringRequest peticion = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try{
+                    JSONObject objJSONResultado = new JSONObject(response.toString());
+                    JSONArray aDatosResultado = objJSONResultado.getJSONArray("resultado");
+
+                    AdaptadorListaContacto miAdaptador = new AdaptadorListaContacto();
+                    miAdaptador.arregloDatos = aDatosResultado;
+                    listaContactos.setAdapter(miAdaptador);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Error: "+ error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String,String> getParams() throws AuthFailureError{
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("accion","buscar");
+                params.put("filtro",criterio);
+                return params;
+            }
+        };
+
+        objetoPeticion.add(peticion);
+
+
     }
 
+    class AdaptadorListaContacto extends BaseAdapter{
+        public JSONArray arregloDatos;
+
+        @Override
+        public int getCount() {
+            return arregloDatos.length();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View v, ViewGroup parent) {
+            v = getLayoutInflater().inflate(R.layout.fila_contacto,null);
+            TextView txtTitulo = v.findViewById(R.id.tvTituloFilaContacto);
+            TextView txtTelefono = v.findViewById(R.id.tvTelefonoFilaContacto);
+            TextView txtCorreo = v.findViewById(R.id.tvCorreoFilaContacto);
+            Button btnVer = v.findViewById(R.id.btnVerContacto);
+
+            JSONObject objJSON = null;
+            try{
+                objJSON = arregloDatos.getJSONObject(position);
+                final String id_contacto, nombre, numero, correo;
+                id_contacto = objJSON.getString("id_contacto");
+                nombre = objJSON.getString("nombre");
+                numero = objJSON.getString("numero");
+                correo= objJSON.getString("correo");
+
+                txtTitulo.setText(nombre);
+                txtTelefono.setText(numero);
+
+
+                btnVer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent ventanaModificar = new Intent(MainActivity.this, ModificarContacto.class);
+                        ventanaModificar.putExtra("id_contacto", id_contacto);
+                        ventanaModificar.putExtra("nombre", nombre);
+                        ventanaModificar.putExtra("numero", numero);
+                        ventanaModificar.putExtra("correo", correo);
+                        startActivity(ventanaModificar);
+                    }
+                });
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            return v;
+        }
+    }
 }

@@ -95,6 +95,7 @@
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayouts"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -117,7 +118,6 @@
                     android:layout_height="wrap_content"
                     android:inputType="textWebEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <com.google.android.material.button.MaterialButton
 
