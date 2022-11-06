@@ -12,7 +12,8 @@
         android:id="@+id/tvTituloFilaContacto"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginBottom="5dp"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/tvTelefonoFilaContacto"

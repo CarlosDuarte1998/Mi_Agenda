@@ -214,10 +214,10 @@ public class ModificarContacto extends AppCompatActivity {
             id_contacto = "";
             regresar();
         }else{
-            id_contacto = valoresAdicionales.getString("id_contacto");
-            nombre_contacto = valoresAdicionales.getString("nombre");
-            telefono_contacto = valoresAdicionales.getString("numero");
-            correo_contacto = valoresAdicionales.getString("correo");
+            id_contacto = valoresAdicionales.getString("id_contacto").toString();
+            nombre_contacto = valoresAdicionales.getString("nombre").toString();
+            telefono_contacto = valoresAdicionales.getString("numero").toString();
+            correo_contacto = valoresAdicionales.getString("correo").toString();
             verContacto();
         }
     }

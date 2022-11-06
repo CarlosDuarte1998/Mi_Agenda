@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View v, ViewGroup parent) {
-            v = getLayoutInflater().inflate(R.layout.fila_contacto,null);
+            v = getLayoutInflater().inflate(R.layout.fila_contactos,null);
             TextView txtTitulo = v.findViewById(R.id.tvTituloFilaContacto);
             TextView txtTelefono = v.findViewById(R.id.tvTelefonoFilaContacto);
             TextView txtCorreo = v.findViewById(R.id.tvCorreoFilaContacto);
@@ -162,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
 
                 txtTitulo.setText(nombre);
                 txtTelefono.setText(numero);
+                txtCorreo.setText(correo);
+
 
 
                 btnVer.setOnClickListener(new View.OnClickListener() {
